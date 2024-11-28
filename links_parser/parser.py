@@ -38,6 +38,9 @@ class ScrapVacancySite:
             for page_name, page_url in PAGES_URLS.items()
         }
 
+    def click_more_button(self):
+        pass
+
     def scrap_pages(self) -> None:
         pages = self.get_pages()
 
