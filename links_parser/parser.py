@@ -44,7 +44,9 @@ class ScrapVacancySite:
             print(f"Processing page: {page_name}")
             self.open_page(page_url)
             self.click_more_button()
-            VacancyLinksParser.write_links_to_txt(self.driver.page_source, f"{page_name}_links.txt")
+            VacancyLinksParser.write_links_to_txt(
+                self.driver.page_source, f"{page_name}_links.txt"
+            )
             print(f"Data collected for {page_name}.")
         self.close_browser()
 
