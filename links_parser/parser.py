@@ -26,7 +26,7 @@ class ScrapVacancySite:
 
     def close_browser(self) -> None:
         print("Close browser")
-        self.driver.close()
+        self.driver.quit()
 
     def open_page(self, page_url: str) -> None:
         self.driver.get(page_url)
@@ -38,20 +38,19 @@ class ScrapVacancySite:
             for page_name, page_url in PAGES_URLS.items()
         }
 
-    def click_more_button(self):
-        pass
-
     def scrap_pages(self) -> None:
         pages = self.get_pages()
-
         for page_name, page_url in pages.items():
             print(f"Processing page: {page_name}")
             self.open_page(page_url)
             self.click_more_button()
-            VacancyLinksParser(self.driver.page_source).write_links_to_txt()
-            print("Collecting data...")
-
+            VacancyLinksParser.write_links_to_txt(self.driver.page_source, f"{page_name}_links.txt")
+            print(f"Data collected for {page_name}.")
         self.close_browser()
+
+    def click_more_button(self):
+        """Method should be overridden in child classes"""
+        pass
 
 
 class ScrapDouSite(ScrapVacancySite):
@@ -71,29 +70,35 @@ class ScrapDouSite(ScrapVacancySite):
                 print("No more buttons available")
                 break
 
+
 class VacancyLinksParser:
     """Class to parse vacancies links and write them into text file"""
-    def __init__(self, page: str) -> None:
-        self.page_source = page
 
-    def get_page_soup(self) -> BeautifulSoup:
-        return BeautifulSoup(self.page_source, "html.parser")
-
-    def get_vacancies_links(self) -> list[str]:
-        soup = self.get_page_soup()
+    @staticmethod
+    def get_vacancies_links(page: str) -> list[str]:
+        soup = BeautifulSoup(page, "html.parser")
         links = [a["href"] for a in soup.select("a.vt") if a.get("href")]
         return links
 
-    def write_links_to_txt(self):
-        with open("links.txt", "w") as f:
-            for link in self.get_vacancies_links():
-                f.write(link + "\n")
-        print(f"Collected {len(self.get_vacancies_links())} links.")
+    @staticmethod
+    def write_links_to_txt(page: str, filename: str):
+        links = VacancyLinksParser.get_vacancies_links(page)
+        try:
+            with open(filename, "w") as f:
+                f.writelines(f"{link}\n" for link in links)
+            print(f"Collected {len(links)} links in {filename}.")
+        except IOError as e:
+            print(f"Failed to write links to {filename}: {e}")
+
 
 def get_all_links() -> None:
-    """Save all pages to corresponding .csv files"""
+    """Save all pages to corresponding .txt files"""
     site_to_scrap = ScrapDouSite()
-    site_to_scrap.scrap_pages()
+    try:
+        site_to_scrap.scrap_pages()
+    except Exception as e:
+        print(f"Error during scraping: {e}")
+        site_to_scrap.close_browser()
 
 
 if __name__ == "__main__":
