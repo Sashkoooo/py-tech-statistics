@@ -8,11 +8,15 @@ class DouSpider(scrapy.Spider):
     """Scrape pages from https://jobs.dou.ua/vacancies/?category=Python"""
 
     name = "dou_spider"
-    start_urls = ["https://jobs.dou.ua/vacancies/?category=Python"]
 
-    def parse(self, response: Response, **kwargs: Any) -> Any:
-        vacancy_page_links = response.css(".vt ::attr(href)").getall()
-        yield from response.follow_all(vacancy_page_links, self.parse_vacancy_page)
+    def start_requests(self):
+        # Load links from the file
+        with open("links_parser/dou_python_links.txt", "r") as f:
+            urls = [line.strip() for line in f.readlines()]
+
+        # Yield Scrapy requests
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse_vacancy_page)
 
     def parse_vacancy_page(self, response: Response, **kwargs: Any) -> None:
         """Parse vacancy page"""
