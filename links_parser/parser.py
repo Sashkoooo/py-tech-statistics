@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -84,14 +85,18 @@ class VacancyLinksParser:
 
     @staticmethod
     def write_links_to_txt(page: str, filename: str):
+        base_dir = Path.cwd().parent
+        file_path = base_dir / "data" / filename
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        absolute_file_path = file_path.resolve()
         links = VacancyLinksParser.get_vacancies_links(page)
+
         try:
-            with open(filename, "w") as f:
+            with open(absolute_file_path, "w") as f:
                 f.writelines(f"{link}\n" for link in links)
             print(f"Collected {len(links)} links in {filename}.")
         except IOError as e:
             print(f"Failed to write links to {filename}: {e}")
-
 
 def get_all_links() -> None:
     """Save all pages to corresponding .txt files"""
