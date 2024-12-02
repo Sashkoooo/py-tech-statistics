@@ -29,9 +29,27 @@ class DouSpider(scrapy.Spider):
 
         yield vacancy
 
+    # @staticmethod
+    # def clean_text(description) -> str:
+    #     """Clean description from non-breaking spaces in Unicode format"""
+    #     cleaned_text_list = [text.replace("\xa0", " ") for text in description]
+    #     cleaned_text_str = " ".join(cleaned_text_list).strip()
+    #     return cleaned_text_str
+
     @staticmethod
     def clean_text(description) -> str:
-        """Clean description from non-breaking spaces in Unicode format"""
-        cleaned_text_list = [text.replace("\xa0", " ") for text in description]
+        """
+        Clean description from non-breaking spaces (NBSP, NNBSP, ZWSP)
+        and other unwanted characters
+        """
+        cleaned_text_list = [
+            text.replace("\xa0", " ")  # Non-breaking space
+            .replace("\u202f", " ")  # Narrow no-break space
+            .replace("\u200b", "")  # Zero-width space
+            .replace("\n", "")  # Replace double newlines with a single newline
+            .replace("\t", "")  # Replace tabs with a single space
+            for text in description
+        ]
         cleaned_text_str = " ".join(cleaned_text_list).strip()
         return cleaned_text_str
+
