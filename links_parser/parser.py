@@ -1,5 +1,11 @@
 import time
 from pathlib import Path
+
+from selenium.common import (
+    TimeoutException,
+    ElementClickInterceptedException,
+    NoSuchElementException
+)
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -55,23 +61,37 @@ class ScrapVacancySite:
         """Method should be overridden in child classes"""
         pass
 
-
-class ScrapDouSite(ScrapVacancySite):
-    """Class to scrap Dou vacancy site"""
-    def click_more_button(self) -> None:
+    def click_button_with_retries(self, css_selector:str) -> None:
         while True:
             try:
                 more_button = WebDriverWait(self.driver, 1).until(
                     ec.element_to_be_clickable(
-                        (By.CSS_SELECTOR, "div.more-btn a")
+                        (By.CSS_SELECTOR, css_selector)
                     )
                 )
                 print("Click button...")
                 more_button.click()
                 time.sleep(0.5)
-            except Exception:
-                print("No more buttons available")
+
+            except TimeoutException:
+                print("No more buttons available (timeout waiting for button).")
                 break
+            except ElementClickInterceptedException:
+                print("Button not clickable (intercepted by another element).")
+                break
+            except NoSuchElementException:
+                print(f"No such element: {css_selector}")
+                break
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+                break
+
+
+class ScrapDouSite(ScrapVacancySite):
+    """Class to scrap Dou vacancy site"""
+    def click_more_button(self) -> None:
+        while self.click_button_with_retries("div.more-btn a"):
+            pass
 
 
 class VacancyLinksParser:
