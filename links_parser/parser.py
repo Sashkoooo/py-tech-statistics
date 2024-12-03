@@ -58,9 +58,6 @@ class ScrapVacancySite:
     def start_vacancy_links_parser(self, page_name):
         """Method should be overridden in child classes"""
         pass
-        # VacancyLinksParser.write_links_to_txt(
-        #     self.driver.page_source, f"{page_name}_links.txt"
-        # )
 
     def click_more_button(self):
         """Method should be overridden in child classes"""
@@ -115,7 +112,6 @@ class VacancyLinksParser:
         soup = BeautifulSoup(page, "html.parser")
         links = [a["href"] for a in soup.select("a.vt") if a.get("href")]
         return links
-        pass
 
     @staticmethod
     def write_links_to_txt(page: str, filename: str):
@@ -135,26 +131,3 @@ class VacancyLinksParser:
         except IOError as e:
             print(f"Failed to write links to {filename}: {e}")
 
-# class DouVacancyLinksParser(VacancyLinksParser):
-#     """Class to parse vacancies links from DOU site"""
-#     @staticmethod
-#     def get_vacancies_links(page: str) -> list[str]:
-#         soup = BeautifulSoup(page, "html.parser")
-#         links = [a["href"] for a in soup.select("a.vt") if a.get("href")]
-#         return links
-
-
-
-
-# def get_all_links() -> None:
-#     """Save all pages to corresponding .txt files"""
-#     site_to_scrap = ScrapDouSite()
-#     try:
-#         site_to_scrap.scrap_pages()
-#     except Exception as e:
-#         print(f"Error during scraping: {e}")
-#         site_to_scrap.close_browser()
-
-
-if __name__ == "__main__":
-    get_all_links()
