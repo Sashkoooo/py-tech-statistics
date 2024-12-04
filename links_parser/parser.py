@@ -51,19 +51,6 @@ class ScrapVacancySite:
             for page_name, page_url in PAGES_URLS.items()
         }
 
-    def scrap_pages(self) -> None:
-        pages = self.get_pages()
-        for page_name, page_url in pages.items():
-            print(f"Processing page: {page_name}")
-            self.open_page(page_url)
-            self.click_more_button("div.more-btn a")
-            self.write_links_to_txt(
-                self.driver.page_source,
-                f"{page_name}_links.txt"
-            )
-            print(f"Data collected for {page_name}.")
-        self.close_browser()
-
     def click_more_button(self, css_selector:str) -> None:
         while True:
             try:
@@ -99,18 +86,33 @@ class ScrapVacancySite:
         return links
 
     def write_links_to_txt(self, page: str, filename: str):
-        base_dir = Path.cwd()
-        print(f"base dir{base_dir}")
-        file_path = base_dir / "data" / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        absolute_file_path = file_path.resolve()
-        print(f"absolute file path: {absolute_file_path}")
+        file_path = self.get_file_path(filename)
         links = self.get_vacancies_links(page)
 
         try:
-            with open(absolute_file_path, "w") as f:
+            with open(file_path, "w") as file:
                 print("writing file")
-                f.writelines(f"{link}\n" for link in links)
+                file.writelines(f"{link}\n" for link in links)
             print(f"Collected {len(links)} links in {filename}.")
-        except IOError as e:
-            print(f"Failed to write links to {filename}: {e}")
+        except IOError as error:
+            print(f"Failed to write links to {filename}: {error}")
+
+    @staticmethod
+    def get_file_path(filename):
+        base_dir = Path.cwd()
+        file_path = base_dir / "data" / filename
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        return file_path.resolve()
+
+    def create_links_list(self) -> None:
+        pages = self.get_pages()
+        for page_name, page_url in pages.items():
+            print(f"Processing page: {page_name}")
+            self.open_page(page_url)
+            self.click_more_button(css_selector="div.more-btn a")
+            self.write_links_to_txt(
+                self.driver.page_source,
+                f"{page_name}_links.txt"
+            )
+            print(f"Data collected for {page_name}.")
+        self.close_browser()
