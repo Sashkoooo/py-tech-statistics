@@ -57,14 +57,12 @@ class ScrapVacancySite:
             print(f"Processing page: {page_name}")
             self.open_page(page_url)
             self.click_more_button("div.more-btn a")
-            self.start_vacancy_links_parser(page_name)
+            self.write_links_to_txt(
+                self.driver.page_source,
+                f"{page_name}_links.txt"
+            )
             print(f"Data collected for {page_name}.")
         self.close_browser()
-
-    def start_vacancy_links_parser(self, page_name):
-        VacancyLinksParser.write_links_to_txt(
-            self.driver.page_source, f"{page_name}_links.txt"
-        )
 
     def click_more_button(self, css_selector:str) -> None:
         while True:
@@ -94,26 +92,20 @@ class ScrapVacancySite:
             )
         )
 
-
-
-class VacancyLinksParser:
-    """Class to parse vacancies links and write them into text file"""
-
     @staticmethod
     def get_vacancies_links(page: str) -> list[str]:
         soup = BeautifulSoup(page, "html.parser")
         links = [a["href"] for a in soup.select("a.vt") if a.get("href")]
         return links
 
-    @staticmethod
-    def write_links_to_txt(page: str, filename: str):
+    def write_links_to_txt(self, page: str, filename: str):
         base_dir = Path.cwd()
         print(f"base dir{base_dir}")
         file_path = base_dir / "data" / filename
         file_path.parent.mkdir(parents=True, exist_ok=True)
         absolute_file_path = file_path.resolve()
         print(f"absolute file path: {absolute_file_path}")
-        links = VacancyLinksParser.get_vacancies_links(page)
+        links = self.get_vacancies_links(page)
 
         try:
             with open(absolute_file_path, "w") as f:
@@ -122,4 +114,3 @@ class VacancyLinksParser:
             print(f"Collected {len(links)} links in {filename}.")
         except IOError as e:
             print(f"Failed to write links to {filename}: {e}")
-
