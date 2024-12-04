@@ -1,17 +1,16 @@
 import os
 import subprocess
-
 from links_parser.parser import ScrapVacancySite
-# from links_parser.parser import get_all_links
+
 
 def get_all_links() -> None:
     """Save all pages to corresponding .txt files"""
     site_to_scrap = ScrapVacancySite()
     try:
-        site_to_scrap.scrap_pages()
+        site_to_scrap.create_links_list()
     except Exception as error:
         print(f"Error during scraping: {error}")
-        site_to_scrap.close_browser()
+        # site_to_scrap.close_browser()
 
 
 if __name__ == "__main__":
