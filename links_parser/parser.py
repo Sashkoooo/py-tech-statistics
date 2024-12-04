@@ -24,11 +24,17 @@ class ScrapVacancySite:
     def __init__(self) -> None:
         print("Open browser")
         opts = Options()
-        opts.add_argument("--headless=new")
-        opts.add_argument("--disable-gpu")
-        opts.add_argument("--window-size=1920,1080")
-        opts.add_argument("--blink-settings=imagesEnabled=false")
-        opts.add_argument("--disable-extensions")
+
+        options = [
+            "--headless=new",
+            "--disable-gpu",
+            "--window-size=1920,1080",
+            "--blink-settings=imagesEnabled=false",
+            "--disable-extensions"
+        ]
+        for opt in options:
+            opts.add_argument(opt)
+
         self.driver = Chrome(options=opts)
 
     def close_browser(self) -> None:
@@ -66,11 +72,7 @@ class ScrapVacancySite:
     def click_button_with_retries(self, css_selector:str) -> None:
         while True:
             try:
-                more_button = WebDriverWait(self.driver, 1).until(
-                    ec.element_to_be_clickable(
-                        (By.CSS_SELECTOR, css_selector)
-                    )
-                )
+                more_button = self.more_button(css_selector)
                 print("Click button...")
                 more_button.click()
                 time.sleep(0.5)
@@ -87,6 +89,13 @@ class ScrapVacancySite:
             except Exception as e:
                 print(f"Unexpected error: {e}")
                 break
+
+    def more_button(self, css_selector):
+        return WebDriverWait(self.driver, 1).until(
+            ec.element_to_be_clickable(
+                (By.CSS_SELECTOR, css_selector)
+            )
+        )
 
 
 class ScrapDouSite(ScrapVacancySite):
