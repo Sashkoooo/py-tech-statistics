@@ -56,20 +56,17 @@ class ScrapVacancySite:
         for page_name, page_url in pages.items():
             print(f"Processing page: {page_name}")
             self.open_page(page_url)
-            self.click_more_button()
+            self.click_more_button("div.more-btn a")
             self.start_vacancy_links_parser(page_name)
             print(f"Data collected for {page_name}.")
         self.close_browser()
 
     def start_vacancy_links_parser(self, page_name):
-        """Method should be overridden in child classes"""
-        pass
+        VacancyLinksParser.write_links_to_txt(
+            self.driver.page_source, f"{page_name}_links.txt"
+        )
 
-    def click_more_button(self):
-        """Method should be overridden in child classes"""
-        pass
-
-    def click_button_with_retries(self, css_selector:str) -> None:
+    def click_more_button(self, css_selector:str) -> None:
         while True:
             try:
                 more_button = self.more_button(css_selector)
@@ -97,20 +94,6 @@ class ScrapVacancySite:
             )
         )
 
-
-class ScrapDouSite(ScrapVacancySite):
-    def __init__(self):
-        super().__init__()
-
-    """Class to scrap DOU vacancy site"""
-    def click_more_button(self) -> None:
-        while self.click_button_with_retries("div.more-btn a"):
-            pass
-
-    def start_vacancy_links_parser(self, page_name):
-        VacancyLinksParser.write_links_to_txt(
-            self.driver.page_source, f"{page_name}_links.txt"
-        )
 
 
 class VacancyLinksParser:
