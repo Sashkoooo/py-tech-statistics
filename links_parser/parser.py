@@ -45,10 +45,10 @@ class ScrapVacancySite:
         self.driver.get(page_url)
 
     @staticmethod
-    def get_pages() -> dict[str, str]:
+    def get_pages(base_url: str, pages_urls: dict) -> dict[str, str]:
         return {
-            page_name: urljoin(BASE_URL, page_url)
-            for page_name, page_url in PAGES_URLS.items()
+            page_name: urljoin(base_url, page_url)
+            for page_name, page_url in pages_urls.items()
         }
 
     def click_more_button(self, css_selector:str) -> None:
@@ -105,7 +105,7 @@ class ScrapVacancySite:
         return file_path.resolve()
 
     def create_links_list(self) -> None:
-        pages = self.get_pages()
+        pages = self.get_pages(BASE_URL, PAGES_URLS)
         for page_name, page_url in pages.items():
             print(f"Processing page: {page_name}")
             self.open_page(page_url)
