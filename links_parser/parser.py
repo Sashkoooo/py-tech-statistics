@@ -20,7 +20,7 @@ PAGES_URLS = {
 }
 
 class ScrapVacancySite:
-    """Class to scrap vacancy site"""
+    """Class to scrap vacancy site & create links list"""
     def __init__(self) -> None:
         print("Open browser")
         opts = Options()
