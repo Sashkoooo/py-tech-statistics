@@ -32,8 +32,8 @@ class ScrapVacancySite:
             "--blink-settings=imagesEnabled=false",
             "--disable-extensions"
         ]
-        for opt in options:
-            opts.add_argument(opt)
+        for option in options:
+            opts.add_argument(option)
 
         self.driver = Chrome(options=opts)
 
