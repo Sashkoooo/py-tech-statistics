@@ -39,8 +39,8 @@ class DouSpider(scrapy.Spider):
             text.replace("\xa0", " ")  # Non-breaking space
             .replace("\u202f", " ")  # Narrow no-break space
             .replace("\u200b", "")  # Zero-width space
-            .replace("\n", "")  # Replace double newlines with a single newline
-            .replace("\t", "")  # Replace tabs with a single space
+            .replace("\n", "")
+            .replace("\t", "")
             for text in description
         ]
         cleaned_text_str = " ".join(cleaned_text_list).strip()
