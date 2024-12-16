@@ -1,3 +1,5 @@
+import subprocess
+
 from links_parser.parser import ScrapVacancySite
 from dataclasses import dataclass, field
 from typing import Dict
@@ -32,11 +34,12 @@ if __name__ == "__main__":
     get_dou_links()
     print("Links gathered successfully.")
 
-    # print("Starting Scrapy crawler...")
-    # try:
-    #     subprocess.run(
-    #         ["scrapy", "crawl", "dou_spider", "-o", "data/dou.jsonl"], check=True
-    #     )
-    #     print("Scrapy crawler completed successfully.")
-    # except subprocess.CalledProcessError as e:
-    #     print(f"Error while running Scrapy: {e}")
+    print("Starting Scrapy crawler...")
+    try:
+        subprocess.run(
+            "python -m scrapy crawl dou_spider -o data/dou.jsonl",
+            check=True
+        )
+        print("Scrapy crawler completed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error while running Scrapy: {e}")
