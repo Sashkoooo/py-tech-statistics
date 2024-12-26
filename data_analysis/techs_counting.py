@@ -21,11 +21,13 @@ class TechnologyCounting:
 
     @staticmethod
     def file_path(file_name) -> Path:
+        """Get file path"""
         base_dir = Path.cwd().parent
         file_path = base_dir / "data" / file_name
         return file_path.resolve()
 
     def descriptions(self) -> list[str]:
+        """Get descriptions from json file"""
         descriptions = []
         try:
             with open(
@@ -49,12 +51,14 @@ class TechnologyCounting:
         return tokens
 
     def tokenized_descriptions(self) -> list[list[str]]:
+        """Tokenize descriptions"""
         tokenized_descriptions = [
             self.preprocess_text(desc) for desc in self.descriptions()
         ]
         return tokenized_descriptions
 
     def technology_counting(self) -> None:
+        """Count technologies in descriptions"""
         for tokens in self.tokenized_descriptions():
             unique_technologies = set()
             for tech, synonyms in technology_groups.items():
@@ -64,6 +68,7 @@ class TechnologyCounting:
 
 
     def save_to_csv(self, output_file: str = None) -> None:
+        """Save results to csv file"""
         if output_file is None:
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
             output_file = f"techs_counting_{timestamp}.csv"
