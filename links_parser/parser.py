@@ -43,12 +43,14 @@ class ScrapVacancySite:
 
     @staticmethod
     def get_pages(base_url: str, pages_urls: dict) -> dict[str, str]:
+        """Get pages urls"""
         return {
             page_name: urljoin(base_url, page_url)
             for page_name, page_url in pages_urls.items()
         }
 
     def click_more_button(self, css_selector:str) -> None:
+        """Click more button"""
         while True:
             try:
                 print("Click button...")
@@ -69,6 +71,7 @@ class ScrapVacancySite:
                 break
 
     def more_button(self, css_selector) -> WebElement:
+        """Get more button"""
         return WebDriverWait(self.driver, 1).until(
             ec.element_to_be_clickable(
                 (By.CSS_SELECTOR, css_selector)
@@ -76,9 +79,11 @@ class ScrapVacancySite:
         )
 
     def page_soup(self) -> BeautifulSoup:
+        """Parse page source"""
         return BeautifulSoup(self.driver.page_source, "html.parser")
 
     def vacancies_links(self, css_selector: str) -> list[str]:
+        """Get links from page source"""
         links = [
             url["href"] for url in self.page_soup().select(css_selector)
             if url.get("href")
@@ -86,6 +91,7 @@ class ScrapVacancySite:
         return links
 
     def write_links_to_txt(self, filename: str, links: list[str]) -> None:
+        """Write links to file"""
         try:
             with open(self.file_path(filename), "w") as file:
                 print("writing file")
