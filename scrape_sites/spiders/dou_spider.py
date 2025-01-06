@@ -11,7 +11,7 @@ class DouSpider(scrapy.Spider):
 
     def start_requests(self):
         # Load links from the file
-        with open("data/dou_python_links.txt", "r") as file:
+        with open("data/links/dou_python_links.txt", "r") as file:
             urls = [line.strip() for line in file.readlines()]
 
         # Yield Scrapy requests
