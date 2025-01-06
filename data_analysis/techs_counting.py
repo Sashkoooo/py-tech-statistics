@@ -19,7 +19,7 @@ class TechnologyCounting:
         self.technology_counting()
 
     @staticmethod
-    def file_path(folder, file_name) -> Path:
+    def file_path(folder: str, file_name: str) -> Path:
         """Get file path"""
         base_dir = Path.cwd()
         file_path = base_dir / "data" / folder / file_name
