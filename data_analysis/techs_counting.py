@@ -5,9 +5,8 @@ import csv
 from nltk.tokenize import word_tokenize
 from pathlib import Path
 from collections import Counter
-from config import technology_groups
+from data_analysis.config import technology_groups
 from datetime import datetime
-from diagram import diagram
 
 nltk.download("punkt")
 
@@ -20,10 +19,10 @@ class TechnologyCounting:
         self.technology_counting()
 
     @staticmethod
-    def file_path(file_name) -> Path:
+    def file_path(folder, file_name) -> Path:
         """Get file path"""
-        base_dir = Path.cwd().parent
-        file_path = base_dir / "data" / file_name
+        base_dir = Path.cwd()
+        file_path = base_dir / "data" / folder / file_name
         return file_path.resolve()
 
     def descriptions(self) -> list[str]:
@@ -31,7 +30,7 @@ class TechnologyCounting:
         descriptions = []
         try:
             with open(
-                    self.file_path(self.file_name), "r", encoding="utf-8"
+                    self.file_path("source",self.file_name), "r", encoding="utf-8"
             ) as file:
                 for line in file:
                     data = json.loads(line)
@@ -74,7 +73,7 @@ class TechnologyCounting:
             output_file = f"techs_counting_{timestamp}.csv"
 
         with open(
-                self.file_path(output_file), "w", newline="", encoding="utf-8"
+                self.file_path("counting", output_file), "w", newline="", encoding="utf-8"
         ) as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Technology", "Frequency"])
@@ -82,10 +81,3 @@ class TechnologyCounting:
                 writer.writerow([tech, count])
 
         print(f"The results are saved to: {output_file}")
-
-
-if __name__ == "__main__":
-
-    techs = TechnologyCounting("dou.jsonl")
-    techs.save_to_csv()
-    diagram(techs.technology_counter)
