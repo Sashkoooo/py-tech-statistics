@@ -103,6 +103,6 @@ class ScrapVacancySite:
     @staticmethod
     def file_path(filename) -> Path:
         base_dir = Path.cwd()
-        file_path = base_dir / "data" / filename
+        file_path = base_dir / "data/links" / filename
         file_path.parent.mkdir(parents=True, exist_ok=True)
         return file_path.resolve()
