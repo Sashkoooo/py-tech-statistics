@@ -101,7 +101,7 @@ class ScrapVacancySite:
             print(f"Failed to write links to {filename}: {error}")
 
     @staticmethod
-    def file_path(filename) -> Path:
+    def file_path(filename: str) -> Path:
         base_dir = Path.cwd()
         file_path = base_dir / "data/links" / filename
         file_path.parent.mkdir(parents=True, exist_ok=True)

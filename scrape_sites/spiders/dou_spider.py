@@ -30,7 +30,7 @@ class DouSpider(scrapy.Spider):
         yield vacancy
 
     @staticmethod
-    def clean_text(description) -> str:
+    def clean_text(description: list[str]) -> str:
         """
         Clean description from non-breaking spaces (NBSP, NNBSP, ZWSP)
         and other unwanted characters
@@ -45,4 +45,3 @@ class DouSpider(scrapy.Spider):
         ]
         cleaned_text_str = " ".join(cleaned_text_list).strip()
         return cleaned_text_str
-
