@@ -1,4 +1,5 @@
 import scrapy
+import re
 from typing import Any
 from scrapy.http import Response
 from scrape_sites.items import ScrapeSitesItem
@@ -32,16 +33,19 @@ class DouSpider(scrapy.Spider):
     @staticmethod
     def clean_text(description: list[str]) -> str:
         """
-        Clean description from non-breaking spaces (NBSP, NNBSP, ZWSP)
-        and other unwanted characters
+        Clean description from unwanted characters and normalize whitespace.
         """
-        cleaned_text_list = [
-            text.replace("\xa0", " ")  # Non-breaking space
-            .replace("\u202f", " ")  # Narrow no-break space
-            .replace("\u200b", "")  # Zero-width space
-            .replace("\n", "")
-            .replace("\t", "")
-            for text in description
-        ]
+        unwanted_chars = {
+            "\xa0": " ",  # Non-breaking space
+            "\u202f": " ",  # Narrow no-break space
+            "\u200b": "",  # Zero-width space
+            "\n": "",
+            "\t": "",
+        }
+        translation_table = str.maketrans(unwanted_chars)
+        cleaned_text_list = [text.translate(translation_table) for text in description]
         cleaned_text_str = " ".join(cleaned_text_list).strip()
-        return cleaned_text_str
+
+        # Normalize multiple spaces to a single space
+        normalized_text = re.sub(r'\s+', ' ', cleaned_text_str)
+        return normalized_text
