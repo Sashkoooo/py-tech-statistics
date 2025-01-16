@@ -22,8 +22,12 @@ class DouSpider(scrapy.Spider):
     def parse_vacancy_page(self, response: Response, **kwargs: Any) -> None:
         """Parse vacancy page"""
         vacancy = ScrapeSitesItem()
-        vacancy["title"] = response.css(".g-h2::text").get()
-        vacancy["company"] = response.css("div.l-n a::text").get()
+        vacancy["title"] = (
+                response.css(".g-h2::text").get() or "No title provided"
+        )
+        vacancy["company"] = (
+                response.css("div.l-n a::text").get() or "No company provided"
+        )
         description = response.css("div.b-typo.vacancy-section ::text").getall()
         vacancy["description"] = self.clean_text(description)
         vacancy["url"] = response.url
