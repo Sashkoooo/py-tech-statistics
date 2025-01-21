@@ -30,8 +30,12 @@ class TestTechnologyCounting(unittest.TestCase):
         self.tech_counter.save_to_csv(test_output_file)
 
         # Assert the file is opened with the correct path
-        expected_file_path = self.tech_counter.file_path("counting", test_output_file)
-        mock_open.assert_called_once_with(expected_file_path, "w", newline="", encoding="utf-8")
+        expected_file_path = self.tech_counter.file_path(
+            "counting", test_output_file
+        )
+        mock_open.assert_called_once_with(
+            expected_file_path, "w", newline="", encoding="utf-8"
+        )
 
         # Assert the CSV writer is called with correct data
         mock_writer.writerow.assert_any_call(["Technology", "Frequency"])
