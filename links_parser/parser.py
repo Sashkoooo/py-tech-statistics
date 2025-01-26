@@ -19,6 +19,9 @@ from bs4 import BeautifulSoup
 class ScrapVacancySite:
     """Class to scrap vacancy site & create links list"""
     def __init__(self) -> None:
+        self.driver = None
+
+    def open_chrome_browser(self) -> None:
         print("Open browser")
         opts = Options()
 

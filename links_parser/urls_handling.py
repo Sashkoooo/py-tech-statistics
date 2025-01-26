@@ -18,6 +18,7 @@ def get_dou_links() -> None:
         pages = on_website.get_pages(urls.base_url, urls.pages_urls)
         for page_name, page_url in pages.items():
             print(f"Processing page: {page_name}")
+            on_website.open_chrome_browser()
             on_website.open_page(page_url)
             on_website.click_more_button(css_selector="div.more-btn a")
             on_website.write_links_to_txt(
