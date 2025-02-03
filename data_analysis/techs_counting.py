@@ -30,7 +30,7 @@ class TechnologyCounting:
         descriptions = []
         try:
             with open(
-                    self.file_path("source",self.file_name), "r", encoding="utf-8"
+                    self.file_path("source", self.file_name), "r", encoding="utf-8"
             ) as file:
                 for line in file:
                     data = json.loads(line)
