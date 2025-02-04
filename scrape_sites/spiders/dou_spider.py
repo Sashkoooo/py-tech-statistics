@@ -1,6 +1,6 @@
 import scrapy
 import re
-from typing import Any
+from typing import Any, Generator
 from scrapy.http import Response
 from scrape_sites.items import ScrapeSitesItem
 
@@ -11,15 +11,23 @@ class DouSpider(scrapy.Spider):
     name = "dou_spider"
 
     def start_requests(self):
-        # Load links from the file
-        with open("data/links/dou_python_links.txt", "r") as file:
-            urls = [line.strip() for line in file.readlines()]
+        # List of file paths to load links from
+        file_paths = [
+            "data/links/dou_python_links.txt",
+            # Add more file paths as needed
+        ]
+
+        # Load links from each file
+        urls = []
+        for file_path in file_paths:
+            with open(file_path, "r") as file:
+                urls.extend(line.strip() for line in file.readlines())
 
         # Yield Scrapy requests
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse_vacancy_page)
 
-    def parse_vacancy_page(self, response: Response, **kwargs: Any) -> None:
+    def parse_vacancy_page(self, response: Response) -> Generator[ScrapeSitesItem, Any, None]:
         """Parse vacancy page"""
         vacancy = ScrapeSitesItem()
         vacancy["title"] = (
