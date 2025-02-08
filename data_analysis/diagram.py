@@ -23,6 +23,7 @@ def diagram(
     diagrams_dir.mkdir(parents=True, exist_ok=True)
 
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    current_date = datetime.now().strftime("%Y-%m-%d")
     diagram_file = diagrams_dir / f"technology_frequencies_chart_{current_time}.png"
 
     # Sort technologies by frequency
@@ -47,15 +48,16 @@ def diagram(
     # Add frequency labels
     ax.bar_label(bars, fmt='%d', padding=3, fontsize=10, color="black")
 
-    # Add a block with information
-    ax.text(0.95, 0.75,
+    # Add a block with date and number of positions types
+    ax.text(0.95, 0.65,
+            f"{current_date}\n\n"
             f"Total Vacancies: {vacancies}\n"
             f"Seniors: {seniors_number}\n"
             f"Middles: {middles_number}\n"
             f"Juniors: {juniors_number}\n"
             f"Not specified: {not_specified_number}",
             transform=ax.transAxes,
-            fontsize=12,
+            fontsize=10,
             ha="right"
             )
 
