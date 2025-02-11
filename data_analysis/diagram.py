@@ -22,16 +22,16 @@ def diagram(
     diagrams_dir = Path.cwd() / "data" / "diagrams"
     diagrams_dir.mkdir(parents=True, exist_ok=True)
 
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    diagram_file = diagrams_dir / f"technology_frequencies_chart_{current_time}.png"
+    current_date_in_filename = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    current_date_in_diagram = datetime.now().strftime("%Y-%m-%d %H:%M")
+    diagram_file = diagrams_dir / f"technology_frequencies_chart_{current_date_in_filename}.png"
 
-    # Sort technologies by frequency
+    # Sort first 25 technologies by frequency
     sorted_technology_groups = sorted(
         technology_groups.items(), key=lambda x: x[1], reverse=True
     )
-    technologies = [item[0] for item in sorted_technology_groups[1:26]]
-    frequencies = [item[1] for item in sorted_technology_groups[1:26]]
+    technologies = [item[0] for item in sorted_technology_groups[0:26]]
+    frequencies = [item[1] for item in sorted_technology_groups[0:26]]
 
     # Create a bar chart
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -50,7 +50,7 @@ def diagram(
 
     # Add a block with date and number of positions types
     ax.text(0.95, 0.65,
-            f"{current_date}\n\n"
+            f"{current_date_in_diagram}\n\n"
             f"Total Vacancies: {vacancies}\n"
             f"Seniors: {seniors_number}\n"
             f"Middles: {middles_number}\n"
