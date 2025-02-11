@@ -1,5 +1,7 @@
 import json
 import re
+from typing import Any
+
 import nltk
 import csv
 from nltk.tokenize import word_tokenize
@@ -11,12 +13,17 @@ from datetime import datetime
 nltk.download("punkt")
 
 
-class TechnologyCounting:
-    """Class to count technologies in descriptions"""
-    def __init__(self, file_name: str) -> None:
-        self.file_name = file_name
+class VacanciesDataCounting:
+    """Class to count data within vacancies source file"""
+    def __init__(self, source_file_name: str) -> None:
+        self.file_name = source_file_name
         self.technology_counter = Counter()
+        self.file_content = self.open_file()
         self.technology_counting()
+        self.senior = None
+        self.middle = None
+        self.junior = None
+        self.not_specified = None
 
     @staticmethod
     def file_path(folder: str, file_name: str) -> Path:
@@ -25,21 +32,46 @@ class TechnologyCounting:
         file_path = base_dir / "data" / folder / file_name
         return file_path.resolve()
 
-    def descriptions(self) -> list[str]:
-        """Get descriptions from json file"""
-        descriptions = []
+    def open_file(self) -> None | list[Any] | list[str]:
+        """Open file"""
         try:
             with open(
                     self.file_path("source", self.file_name), "r", encoding="utf-8"
             ) as file:
-                for line in file:
-                    data = json.loads(line)
-                    descriptions.append(data.get("description", ""))
+                print("File opened successfully.")
+                return file.readlines()
         except FileNotFoundError:
             print(f"File {self.file_name} is not found.")
-        except json.JSONDecodeError:
-            print(f"JSON file {self.file_name} decoding error.")
-        return descriptions
+        except IOError:
+            print(f"Error opening file {self.file_name}.")
+            return []
+
+    def get_data_from_jsonl(self, column_name: str) -> list[Any]:
+        """Get data from jsonl file"""
+        output = []
+        lines = self.file_content
+        for line in lines:
+            data = json.loads(line)
+            output.append(data.get(column_name, ""))
+        return output
+
+    def titles_number(self) -> int:
+        """Get number of titles"""
+        return len(self.get_data_from_jsonl(column_name="title"))
+
+    def count_positions(self) -> None:
+        """Count positions"""
+        self.senior, self.middle, self.junior, self.not_specified = 0, 0, 0, 0
+
+        for position in self.get_data_from_jsonl(column_name="title"):
+            if "senior" in position.lower():
+                self.senior += 1
+            elif "middle" in position.lower():
+                self.middle += 1
+            elif "junior" in position.lower():
+                self.junior += 1
+            else:
+                self.not_specified +=1
 
     @staticmethod
     def preprocess_text(text: str) -> list[str]:
@@ -52,7 +84,8 @@ class TechnologyCounting:
     def tokenized_descriptions(self) -> list[list[str]]:
         """Tokenize descriptions"""
         tokenized_descriptions = [
-            self.preprocess_text(desc) for desc in self.descriptions()
+            self.preprocess_text(description)
+            for description in self.get_data_from_jsonl(column_name="description")
         ]
         return tokenized_descriptions
 
