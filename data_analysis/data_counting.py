@@ -20,13 +20,13 @@ class VacanciesDataCounting:
         self.technology_counter = Counter()
         self.file_content = self.open_file()
         self.technology_counting()
-        self.senior = None
-        self.middle = None
-        self.junior = None
-        self.not_specified = None
+        self.senior = 0
+        self.middle = 0
+        self.junior = 0
+        self.not_specified = 0
 
     @staticmethod
-    def file_path(folder: str, file_name: str) -> Path:
+    def get_file_path(folder: str, file_name: str) -> Path:
         """Get file path"""
         base_dir = Path.cwd()
         file_path = base_dir / "data" / folder / file_name
@@ -36,12 +36,13 @@ class VacanciesDataCounting:
         """Open file"""
         try:
             with open(
-                    self.file_path("source", self.file_name), "r", encoding="utf-8"
+                    self.get_file_path("source", self.file_name), "r", encoding="utf-8"
             ) as file:
                 print("File opened successfully.")
                 return file.readlines()
         except FileNotFoundError:
             print(f"File {self.file_name} is not found.")
+            return []
         except IOError:
             print(f"Error opening file {self.file_name}.")
             return []
@@ -61,8 +62,6 @@ class VacanciesDataCounting:
 
     def count_positions(self) -> None:
         """Count positions"""
-        self.senior, self.middle, self.junior, self.not_specified = 0, 0, 0, 0
-
         for position in self.get_data_from_jsonl(column_name="title"):
             if "senior" in position.lower():
                 self.senior += 1
@@ -106,7 +105,7 @@ class VacanciesDataCounting:
             output_file = f"techs_counting_{timestamp}.csv"
 
         with open(
-                self.file_path("counting", output_file), "w", newline="", encoding="utf-8"
+                self.get_file_path("counting", output_file), "w", newline="", encoding="utf-8"
         ) as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Technology", "Frequency"])
