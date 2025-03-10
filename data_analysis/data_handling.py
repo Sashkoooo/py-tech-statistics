@@ -9,7 +9,7 @@ def python_techs_handling(
     ) -> None:
     """Count technologies, save to csv and create diagram"""
     vacancies = VacanciesDataCounting(source_file_name)
-    # vacancies.save_to_csv()
+    vacancies.save_to_csv()
     vacancies.count_positions()
     diagram(
         technology_groups=vacancies.technology_counter,
