@@ -15,7 +15,7 @@ To get this project up and running locally on your computer:
    py -m venv venv
    venv\Scripts\activate (on Windows)
    source venv/bin/activate (on macOS)
-   pip install -r requirments
+   pip install -r requirements.txt
 
    ```
 3. Run `python main.py`
